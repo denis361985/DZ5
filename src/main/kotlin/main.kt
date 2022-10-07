@@ -1,5 +1,21 @@
 import java.util.concurrent.atomic.AtomicInteger
 
+interface Attachment {
+    val type: String
+}
+
+class Photo (val id_photo: Int? = null)
+
+class PhotoAttachment : Attachment {
+    override val type: String = "Photo"
+    val photo: Photo = Photo()
+}
+class Video (val id_video: Int? = null)
+
+class VideoAttachment : Attachment {
+    override val type: String = "Video"
+    val video: Video = Video()
+}
 data class Post(
     val id: Int = 1,
     val owner_id: Int = 1,
@@ -7,7 +23,9 @@ data class Post(
     val date: Int,
     val text: String,
     val friends_only: Boolean,
-    val likes: Likes
+    val likes: Likes,
+    val original: Post?,
+    val attachments: Array<Attachment>? = null
 )
 
 
@@ -48,7 +66,7 @@ class WallService {
 }
 
 fun main() {
-    val post = Post(1, 1, 2, 0, "Привет", true, Likes())
+    val post = Post(1, 1, 2, 0, "Привет", true, Likes(), null)
     val service = WallService()
     service.add(post)
     println(service.posts.last())
