@@ -1,17 +1,15 @@
+import java.lang.RuntimeException
 import java.util.concurrent.atomic.AtomicInteger
 
 interface Attachment {
     val type: String
 }
-
 class Photo (val id_photo: Int? = null)
-
 class PhotoAttachment : Attachment {
     override val type: String = "Photo"
     val photo: Photo = Photo()
 }
 class Video (val id_video: Int? = null)
-
 class VideoAttachment : Attachment {
     override val type: String = "Video"
     val video: Video = Video()
@@ -25,20 +23,35 @@ data class Post(
     val friends_only: Boolean,
     val likes: Likes,
     val original: Post?,
-    val attachments: Array<Attachment>? = null
+    val attachments: Array<Attachment>? = null,
+    var comment: Array<Comment>? = null
 )
 
+data class Comment (val id: Int, val text: String)
 
 data class Likes(
     var count: Int = 0,
     val user_likes: Boolean = false
 )
 
+class PostNotFoundException (message: String): RuntimeException(message)
+
 class WallService {
     var posts = emptyArray<Post>()
+    var comments = emptyArray<Comment>()
 
     private var idGenerator = AtomicInteger()
     private fun generateId(): Int = idGenerator.incrementAndGet()
+
+    fun createComment (postId: Int, comment: Comment): Comment {
+        for (post in posts) {
+            if (post.id == postId){
+                comments += comment
+                return comments.last()
+            }
+        }
+        throw PostNotFoundException("Такой пост не найден")
+    }
 
     fun add(post: Post) = post.copy(id = generateId()).apply {
         posts += post
@@ -72,6 +85,8 @@ fun main() {
     println(service.posts.last())
     service.likedById(1)
     println(service.posts.last())
+    service.createComment(1, Comment(2, "Привет"))
+
 }
 
 
