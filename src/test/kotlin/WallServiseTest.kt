@@ -1,9 +1,29 @@
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import junit.framework.TestCase.*
+import org.junit.Test
 
 
 internal class WallServiceTest {
+
+    @Test(expected = PostNotFoundException::class)
+    fun shouldThrow() {
+        val service = WallService()
+        val commentForTest = Comment(102, "test")
+        service.createComment(55, commentForTest)
+    }
+    @Test
+    fun shouldAddComment() {
+        val service = WallService()
+        val postForComment = Post(1, 1, 2, 0, "Привет", true, Likes(), null)
+        val commentForTest1 = Comment(101, "testGood")
+        val expected = "testGood"
+
+        service.add(postForComment)
+        service.createComment(1, commentForTest1)
+
+        val result = commentForTest1.text
+
+        assertEquals(expected, result)
+    }
 
     @Test
     fun add() {

@@ -25,7 +25,47 @@ data class Post(
     val original: Post?,
     val attachments: Array<Attachment>? = null,
     var comment: Array<Comment>? = null
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Post
+
+        if (id != other.id) return false
+        if (owner_id != other.owner_id) return false
+        if (from_id != other.from_id) return false
+        if (date != other.date) return false
+        if (text != other.text) return false
+        if (friends_only != other.friends_only) return false
+        if (likes != other.likes) return false
+        if (original != other.original) return false
+        if (attachments != null) {
+            if (other.attachments == null) return false
+            if (!attachments.contentEquals(other.attachments)) return false
+        } else if (other.attachments != null) return false
+        if (comment != null) {
+            if (other.comment == null) return false
+            if (!comment.contentEquals(other.comment)) return false
+        } else if (other.comment != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + owner_id
+        result = 31 * result + from_id
+        result = 31 * result + date
+        result = 31 * result + text.hashCode()
+        result = 31 * result + friends_only.hashCode()
+        result = 31 * result + likes.hashCode()
+        result = 31 * result + (original?.hashCode() ?: 0)
+        result = 31 * result + (attachments?.contentHashCode() ?: 0)
+        result = 31 * result + (comment?.contentHashCode() ?: 0)
+        return result
+    }
+}
 
 data class Comment (val id: Int, val text: String)
 
